@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import '../App.css';
 
-export default function Todotask() {
+export default function Todotask({title,details}) {
   return (
     <Card className="todo"
       sx={{
@@ -35,10 +35,10 @@ export default function Todotask() {
     }}
   >
     <Typography variant="h5" sx={{ fontWeight: 600 }}>
-      Task 1
+     {title}
     </Typography>
      <Typography variant="h7" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-       task  details
+      {details}
       </Typography>
   </Grid>
 
