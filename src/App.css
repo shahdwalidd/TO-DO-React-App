@@ -40,3 +40,21 @@
 .read-the-docs {
   color: #888;
 }
+/* ملف CSS مثلاً Todo.css */
+.todo {
+  min-width: 275px;
+  max-width: 600px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  /* الحركة سلسة */
+}
+
+.todo:hover {
+ padding-bottom: 20px;
+ padding-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
