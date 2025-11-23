@@ -11,33 +11,34 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import '../App.css';
 import { v4 as uuidv4 } from 'uuid';
-import Todotask from './TOdotask';
-const todos=[{
-id:uuidv4(),
-title:"reading book",
-details:"from page 1 to 50",
-iscompleted:false 
-},
-{
-id:uuidv4()
-,
-title:"reading book",
-details:"from page 1 to 50",
-iscompleted:false 
-},
-{
-id:uuidv4(),
-title:"reading book",
-details:"from page 1 to 50",
-iscompleted:false 
-}
-]
+import { useState } from 'react';
+
+const initialTodos = [
+  {
+    id: uuidv4(),
+    title: "reading book",
+    details: "from page 1 to 50",
+    isCompleted: false
+  },
+  {
+    id: uuidv4(),
+    title: "reading book",
+    details: "from page 1 to 50",
+    isCompleted: false
+  },
+  {
+    id: uuidv4(),
+    title: "reading book",
+    details: "from page 1 to 50",
+    isCompleted: false
+  }
+];
 
 export default function TOdolist() {
-  const todosjsx = todos.map((t)=>{
-    return <TODO  key={t.id} title={t.title} details={t.details}/>
-  })
-  const [alignment, setAlignment] = React.useState('all');
+
+  const [todos, setTodos] = useState(initialTodos);
+  const [titleInput, setTitle] = useState("");
+  const [alignment, setAlignment] = useState("all");
 
   const handleChange = (event, newAlignment) => {
     if (newAlignment !== null) {
@@ -45,58 +46,67 @@ export default function TOdolist() {
     }
   };
 
+  function handleComplete(id) {
+    setTodos(prev =>
+      prev.map(todo =>
+        todo.id === id ? { ...todo, isCompleted: true } : todo
+      )
+    );
+  }
+
+  function handleAddClick() {
+    if (titleInput.trim() === "") return;
+
+    const NEWTODO = {
+      id: uuidv4(),
+      title: titleInput,
+      details: "",
+      isCompleted: false,
+    };
+
+    setTodos([...todos, NEWTODO]);
+    setTitle("");
+  }
+
+  // ---------- FILTERING ----------
+  const filteredTodos = todos.filter(t => {
+    if (alignment === "completed") return t.isCompleted === true;
+    if (alignment === "notcompleted") return t.isCompleted === false;
+    return true; // ALL
+  });
+
   return (
     <Container 
       maxWidth="lg" 
-      sx={{ 
-        mt: 5, 
-        display: 'flex', 
-        justifyContent: 'center',   
-        px: 2,
-      }}
+      sx={{ mt: 5, display: 'flex', justifyContent: 'center', px: 2 }}
     >
-      <Card
-        sx={{
-          maxWidth: 650,
-          width: '100%',
-          p: 4,
-          background: "linear-gradient(135deg, #1e3a8a, #1e40af)",
-          color: "white",
-          borderRadius: 4,
-          boxShadow: "0 8px 25px rgba(0,0,0,0.3)"
-        }}
-      >
+      <Card sx={{
+        maxWidth: 650,
+        width: '100%',
+        p: 4,
+        background: "linear-gradient(135deg, #1e3a8a, #1e40af)",
+        color: "white",
+        borderRadius: 4,
+        boxShadow: "0 8px 25px rgba(0,0,0,0.3)"
+      }}>
         <CardContent>
 
-          {/* ------------------ TITLE ------------------ */}
-          <Typography 
-            variant="h4" 
-            gutterBottom 
-            sx={{ 
-              fontWeight: "bold",
-              letterSpacing: 1,
-              textAlign: "center",
-              mb: 3
-            }}
-          >
+          <Typography variant="h4" gutterBottom sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            mb: 3
+          }}>
             MY TASKS
           </Typography>
 
-          <Divider 
-            sx={{ 
-              mb: 3, 
-              borderColor: "rgba(255,255,255,0.3)" 
-            }} 
-          />
+          <Divider sx={{ mb: 3, borderColor: "rgba(255,255,255,0.3)" }} />
 
-
-          {/* ------------------ FILTER BUTTONS ------------------ */}
+          {/* FILTER BUTTONS */}
           <ToggleButtonGroup
             color="primary"
             value={alignment}
             exclusive
             onChange={handleChange}
-            aria-label="Task Filter"
             sx={{
               mb: 4,
               display: "flex",
@@ -108,15 +118,12 @@ export default function TOdolist() {
                 px: 3,
                 py: 1.3,
                 fontWeight: "bold",
-                fontSize: "0.9rem",
                 backgroundColor: "rgba(255,255,255,0.15)",
-                color: "white",
-                transition: "0.3s",
+                color: "white"
               },
               "& .Mui-selected": {
                 backgroundColor: "#3b82f6 !important",
-                color: "#fff !important",
-                boxShadow: "0 3px 10px rgba(59,130,246,0.5)",
+                color: "#fff !important"
               }
             }}
           >
@@ -125,64 +132,51 @@ export default function TOdolist() {
             <ToggleButton value="notcompleted">Not Completed</ToggleButton>
           </ToggleButtonGroup>
 
+          {/* TASK LIST */}
+          {filteredTodos.map(t => (
+            <TODO 
+              key={t.id} 
+              id={t.id} 
+              title={t.title} 
+              details={t.details} 
+               isCompleted={t.isCompleted}
+              onComplete={handleComplete}
+            />
+          ))}
 
-          {/* ------------------ TASK LIST ------------------ */}
-         {todosjsx }
-
-
-          {/* ------------------ INPUT AREA ------------------ */}
-          <Grid 
-            container  alignItems="center"  justifyContent="space-between"
-            spacing={2} 
-            sx={{ mt:4}}
-          >
+          {/* INPUT AREA */}
+          <Grid container alignItems="center" justifyContent={'space-between'} spacing={2} sx={{ mt:4 }}>
             <Grid item xs={8}>
-              <TextField
-                 
+              <TextField 
+                value={titleInput}
+                onChange={(e) => setTitle(e.target.value)}
                 label="Enter task"
                 variant="outlined"
-                width='1000px'
                 InputLabelProps={{ style: { color: "white" } }}
                 InputProps={{ style: { color: "white" } }}
                 sx={{
+                  width: "300px",
                   backgroundColor: "rgba(255,255,255,0.1)",
-                  borderRadius: 2,
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "rgba(255,255,255,0.4)"
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "white"
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#60a5fa"
-                    }
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#93c5fd"
-                  }
+                  borderRadius: 2
                 }}
               />
             </Grid>
 
             <Grid item xs={4}>
-              <button
-              
-                  style={{
-        width: "100px",
-        height: "100%",               // يخلي الزرار نفس ارتفاع الانبوت
-        padding: "16px 0",            // تكبير الحجم
-        fontSize: "1.2rem",           // تكبير الخط
-        fontWeight: "bold",
-        backgroundColor: "#2563eb",   // أزرق أحلى
-        color: "white",
-        border: "none",
-        borderRadius: "12px",
-        cursor: "pointer",
-        transition: "0.3s",
-        boxShadow: "0 4px 14px rgba(37,99,235,0.5)",
-      }}
-                
+              <button 
+                onClick={handleAddClick}
+                style={{
+                  width: "100px",
+                  height: "100%",
+                  padding: "16px 0",
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  backgroundColor: "#2563eb",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "12px",
+                  cursor: "pointer"
+                }}
               >
                 ADD
               </button>

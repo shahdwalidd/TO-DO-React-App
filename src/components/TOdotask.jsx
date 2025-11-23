@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import '../App.css';
 
-export default function Todotask({title,details}) {
+export default function Todotask({id,title,details,onComplete,isCompleted }) {
   return (
     <Card className="todo"
       sx={{
@@ -55,18 +55,24 @@ export default function Todotask({title,details}) {
   >
     <Stack direction="row" spacing={1} sx={{ mr: 1 }}>
       
-      <IconButton
-        aria-label="check"
-        sx={{
-          backgroundColor: "#f3f4f6",
-          color: "#10b981",
-          "&:hover": { backgroundColor: "#e5e7eb" },
-          borderRadius: 2,
-          p: "6px"
-        }}
-      >
-        <CheckCircleIcon fontSize="small" />
-      </IconButton>
+     <IconButton
+  onClick={() => onComplete(id)}
+  aria-label="check"
+  sx={{
+    backgroundColor: isCompleted ? "#10b981" : "#f3f4f6",
+    color: isCompleted ? "white" : "#10b981",
+    border: isCompleted ? "2px solid #10b981" : "2px solid transparent",
+    "&:hover": {
+      backgroundColor: isCompleted ? "#0f9d77" : "#e5e7eb",
+    },
+    borderRadius: 2,
+    p: "6px",
+    transition: "0.3s",
+  }}
+>
+  <CheckCircleIcon fontSize="small" />
+</IconButton>
+
 
       <IconButton
         aria-label="edit"
