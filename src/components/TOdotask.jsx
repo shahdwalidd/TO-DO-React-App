@@ -13,11 +13,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
+import TextField from '@mui/material/TextField';
 import React, { useState } from "react";
 import Button from "@mui/material/Button";
 
-export default function Todotask({id,title,details,onComplete,isCompleted,ondelete }) {
+export default function Todotask({id,title,details,onComplete,isCompleted,ondelete, onedit }) {
 
   const [open, setOpen] = useState(false);
 
@@ -29,6 +29,18 @@ export default function Todotask({id,title,details,onComplete,isCompleted,ondele
     setOpen(false);
   };
  
+
+  const [open1, setOpen1] = React.useState(false);
+  const [editText, setEditText] = useState(title);
+
+  const handleClickOpenedit = () => {
+    setOpen1(true);
+  };
+
+  const handleClose = () => {
+    setOpen1(false);
+  };
+   
 
   return (
     <>
@@ -55,6 +67,30 @@ export default function Todotask({id,title,details,onComplete,isCompleted,ondele
           </Button>
         </DialogActions>
       </Dialog>
+      {/* edit modal */}
+     <Dialog open={open1} onClose={handleClose}>
+  <DialogTitle>Edit Task</DialogTitle>
+  <DialogContent>
+    <TextField
+      autoFocus
+      margin="dense"
+      label="Task"
+      type="text"
+      fullWidth
+      variant="standard"
+      value={editText}
+      onChange={(e) => setEditText(e.target.value)}
+    />
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleClose}>Cancel</Button>
+    <Button
+      onClick={() => { onedit(id, editText); handleClose(); }}
+    >
+      OK
+    </Button>
+  </DialogActions>
+</Dialog>
     <Card className="todo"
       sx={{
         minWidth: 275,
@@ -119,7 +155,7 @@ export default function Todotask({id,title,details,onComplete,isCompleted,ondele
 
 
       <IconButton
-        aria-label="edit"
+        aria-label="edit" onClick={handleClickOpenedit}
         sx={{
           backgroundColor: "#f3f4f6",
           color: "#3b82f6",

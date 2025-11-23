@@ -57,6 +57,13 @@ export default function TOdolist() {
   function handledelete(id){
      setTodos(prev => prev.filter(todo => todo.id !== id));
   }
+  function handeledit(id,newTitle){
+    setTodos(prev =>
+    prev.map(todo =>
+      todo.id === id ? { ...todo, title: newTitle } : todo
+    )
+  );
+  }
 
   function handleAddClick() {
     if (titleInput.trim() === "") return;
@@ -146,6 +153,7 @@ export default function TOdolist() {
                isCompleted={t.isCompleted}
               onComplete={handleComplete}
               ondelete={handledelete}
+               onedit={handeledit}
             />
           ))}
 
