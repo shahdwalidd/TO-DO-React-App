@@ -49,9 +49,13 @@ export default function TOdolist() {
   function handleComplete(id) {
     setTodos(prev =>
       prev.map(todo =>
-        todo.id === id ? { ...todo, isCompleted: true } : todo
+        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+       
       )
     );
+  }
+  function handledelete(id){
+     setTodos(prev => prev.filter(todo => todo.id !== id));
   }
 
   function handleAddClick() {
@@ -141,6 +145,7 @@ export default function TOdolist() {
               details={t.details} 
                isCompleted={t.isCompleted}
               onComplete={handleComplete}
+              ondelete={handledelete}
             />
           ))}
 
