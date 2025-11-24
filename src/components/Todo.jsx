@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import '../App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 const initialTodos = [
   {
@@ -46,25 +47,40 @@ export default function TOdolist() {
     }
   };
 
-  function handleComplete(id) {
-    setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-       
-      )
-    );
-  }
-  function handledelete(id){
-     setTodos(prev => prev.filter(todo => todo.id !== id));
-  }
-  function handeledit(id,newTitle){
-    setTodos(prev =>
-    prev.map(todo =>
-      todo.id === id ? { ...todo, title: newTitle } : todo
-    )
+ function handleComplete(id) {
+  // تحديث نسخة التودوز
+  const updatedTodos = todos.map(todo =>
+    todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
   );
-  }
 
+
+  setTodos(updatedTodos);
+
+
+  localStorage.setItem("todos", JSON.stringify(updatedTodos));
+}
+
+  function handledelete(id){
+     const updatedTodos= todos.filter(todo => todo.id !== id);
+     
+  setTodos(updatedTodos);
+  localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
+  }
+ function handeledit(id, newTitle) {
+  const updatedTodos = todos.map(todo =>
+    todo.id === id ? { ...todo, title: newTitle } : todo
+  );
+
+  setTodos(updatedTodos);
+  localStorage.setItem("todos", JSON.stringify(updatedTodos));
+}
+
+useEffect(()=>{
+  console.log("calling")
+  const storge=JSON.parse(localStorage.getItem("todos"))
+  setTodos(storge);
+},[])
   function handleAddClick() {
     if (titleInput.trim() === "") return;
 
@@ -74,8 +90,9 @@ export default function TOdolist() {
       details: "",
       isCompleted: false,
     };
-
-    setTodos([...todos, NEWTODO]);
+const updatedtodos=[...todos, NEWTODO]
+    setTodos(updatedtodos);
+    localStorage.setItem("todos",JSON.stringify(updatedtodos))
     setTitle("");
   }
 
@@ -87,6 +104,7 @@ export default function TOdolist() {
   });
 
   return (
+   
     <Container 
       maxWidth="lg" 
       sx={{ mt: 5, display: 'flex', justifyContent: 'center', px: 2 }}
