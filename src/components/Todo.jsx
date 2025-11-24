@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React from 'react';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
@@ -13,6 +14,7 @@ import '../App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useMemo } from 'react';
 
 const initialTodos = [
   {
@@ -23,14 +25,14 @@ const initialTodos = [
   },
   {
     id: uuidv4(),
-    title: "reading book",
-    details: "from page 1 to 50",
+    title: "study",
+    details: "data mining",
     isCompleted: false
   },
   {
     id: uuidv4(),
-    title: "reading book",
-    details: "from page 1 to 50",
+    title: "do tasks",
+    details: " for sections",
     isCompleted: false
   }
 ];
@@ -43,7 +45,9 @@ export default function TOdolist() {
 
   const handleChange = (event, newAlignment) => {
     if (newAlignment !== null) {
+      
       setAlignment(newAlignment);
+      console.log("change");
     }
   };
 
@@ -51,12 +55,14 @@ export default function TOdolist() {
   // تحديث نسخة التودوز
   const updatedTodos = todos.map(todo =>
     todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+   
+    
   );
 
 
   setTodos(updatedTodos);
 
-
+    
   localStorage.setItem("todos", JSON.stringify(updatedTodos));
 }
 
@@ -97,12 +103,14 @@ const updatedtodos=[...todos, NEWTODO]
   }
 
   // ---------- FILTERING ----------
-  const filteredTodos = todos.filter(t => {
+  const filteredTodos =  useMemo(()=>{
+    return  todos.filter(t => {
     if (alignment === "completed") return t.isCompleted === true;
     if (alignment === "notcompleted") return t.isCompleted === false;
     return true; // ALL
   });
 
+  }, [todos, alignment])
   return (
    
     <Container 
@@ -163,6 +171,7 @@ const updatedtodos=[...todos, NEWTODO]
 
           {/* TASK LIST */}
           {filteredTodos.map(t => (
+            
             <TODO 
               key={t.id} 
               id={t.id} 
@@ -173,7 +182,9 @@ const updatedtodos=[...todos, NEWTODO]
               ondelete={handledelete}
                onedit={handeledit}
             />
-          ))}
+               
+          )   )
+              }
 
           {/* INPUT AREA */}
           <Grid container alignItems="center" justifyContent={'space-between'} spacing={2} sx={{ mt:4 }}>
