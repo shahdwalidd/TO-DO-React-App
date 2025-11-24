@@ -76,11 +76,11 @@ export default function TOdolist() {
   localStorage.setItem("todos", JSON.stringify(updatedTodos));
 }
 
-useEffect(()=>{
-  console.log("calling")
-  const storge=JSON.parse(localStorage.getItem("todos"))
+useEffect(() => {
+  const storge = JSON.parse(localStorage.getItem("todos")) || initialTodos;
   setTodos(storge);
-},[])
+}, []);
+
   function handleAddClick() {
     if (titleInput.trim() === "") return;
 
