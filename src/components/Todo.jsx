@@ -15,6 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useMemo } from 'react';
+import { useContext } from 'react';
+import { Toastcontext } from '../contexts/Toastcontext';
+// localStorage.removeItem("todos");
 
 const initialTodos = [
   {
@@ -38,7 +41,7 @@ const initialTodos = [
 ];
 
 export default function TOdolist() {
-
+const {showhidetoast}= useContext(Toastcontext);
   const [todos, setTodos] = useState(initialTodos);
   const [titleInput, setTitle] = useState("");
   const [alignment, setAlignment] = useState("all");
@@ -62,7 +65,7 @@ export default function TOdolist() {
 
   setTodos(updatedTodos);
 
-    
+    showhidetoast(" well done,you have completed this task ");
   localStorage.setItem("todos", JSON.stringify(updatedTodos));
 }
 
@@ -70,15 +73,18 @@ export default function TOdolist() {
      const updatedTodos= todos.filter(todo => todo.id !== id);
      
   setTodos(updatedTodos);
+  showhidetoast("task deleted successfully")
   localStorage.setItem("todos", JSON.stringify(updatedTodos));
 
   }
- function handeledit(id, newTitle) {
+ function handeledit(id, newTitle,newdetails) {
   const updatedTodos = todos.map(todo =>
-    todo.id === id ? { ...todo, title: newTitle } : todo
+    todo.id === id ? { ...todo, title: newTitle,details :newdetails} : todo
+   
   );
 
   setTodos(updatedTodos);
+   showhidetoast("task editted successfully");
   localStorage.setItem("todos", JSON.stringify(updatedTodos));
 }
 
@@ -100,6 +106,7 @@ const updatedtodos=[...todos, NEWTODO]
     setTodos(updatedtodos);
     localStorage.setItem("todos",JSON.stringify(updatedtodos))
     setTitle("");
+    showhidetoast("new task added successfully");
   }
 
   // ---------- FILTERING ----------

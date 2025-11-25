@@ -32,6 +32,7 @@ export default function Todotask({id,title,details,onComplete,isCompleted,ondele
 
   const [open1, setOpen1] = React.useState(false);
   const [editText, setEditText] = useState(title);
+  const[editdetails,setEditdetails] =useState(details);
 
   const handleClickOpenedit = () => {
     setOpen1(true);
@@ -81,11 +82,21 @@ export default function Todotask({id,title,details,onComplete,isCompleted,ondele
       value={editText}
       onChange={(e) => setEditText(e.target.value)}
     />
+    <TextField
+      autoFocus
+      margin="dense"
+      label="enter task details"
+      type="text"
+      fullWidth
+      variant="standard"
+      value={editdetails}
+      onChange={(e) => setEditdetails(e.target.value)}
+    />
   </DialogContent>
   <DialogActions>
     <Button onClick={handleClose}>Cancel</Button>
     <Button
-      onClick={() => { onedit(id, editText); handleClose(); }}
+      onClick={() => { onedit(id, editText,editdetails); handleClose(); }}
     >
       OK
     </Button>
@@ -114,7 +125,9 @@ export default function Todotask({id,title,details,onComplete,isCompleted,ondele
       pl: 1  
     }}
   >
-    <Typography variant="h5" sx={{ fontWeight: 600 }}>
+    <Typography variant="h5" sx={{ fontWeight: 600,
+      textDecoration: isCompleted ? "line-through" : "none",
+     }}>
      {title}
     </Typography>
      <Typography variant="h7" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
@@ -140,6 +153,7 @@ export default function Todotask({id,title,details,onComplete,isCompleted,ondele
   aria-label="check"
   sx={{
     backgroundColor: isCompleted ? "#10b981" : "#f3f4f6",
+    
     color: isCompleted ? "white" : "#10b981",
     border: isCompleted ? "2px solid #10b981" : "2px solid transparent",
     "&:hover": {
