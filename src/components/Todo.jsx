@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import React from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -12,118 +12,93 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import '../App.css';
 import { v4 as uuidv4 } from 'uuid';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useMemo } from 'react';
-import { useContext } from 'react';
 import { Toastcontext } from '../contexts/Toastcontext';
-// localStorage.removeItem("todos");
+
 
 const initialTodos = [
-  {
-    id: uuidv4(),
-    title: "reading book",
-    details: "from page 1 to 50",
-    isCompleted: false
-  },
-  {
-    id: uuidv4(),
-    title: "study",
-    details: "data mining",
-    isCompleted: false
-  },
-  {
-    id: uuidv4(),
-    title: "do tasks",
-    details: " for sections",
-    isCompleted: false
-  }
+  { id: uuidv4(), title: "reading book", details: "from page 1 to 50", isCompleted: false },
+  { id: uuidv4(), title: "study", details: "data mining", isCompleted: false },
+  { id: uuidv4(), title: "do tasks", details: "for sections", isCompleted: false }
 ];
 
 export default function TOdolist() {
-const {showhidetoast}= useContext(Toastcontext);
+  const { showHideToast } = useContext(Toastcontext);
   const [todos, setTodos] = useState(initialTodos);
   const [titleInput, setTitle] = useState("");
   const [alignment, setAlignment] = useState("all");
 
+  
   const handleChange = (event, newAlignment) => {
-    if (newAlignment !== null) {
-      
-      setAlignment(newAlignment);
-      console.log("change");
-    }
+    if (newAlignment !== null) setAlignment(newAlignment);
   };
 
- function handleComplete(id) {
-  // تحديث نسخة التودوز
-  const updatedTodos = todos.map(todo =>
-    todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-   
-    
-  );
+  function handleComplete(id) {
+    const updatedTodos = todos.map(todo =>
+      todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+    );
+    setTodos(updatedTodos);
 
+    const changedTodo = updatedTodos.find(todo => todo.id === id);
+    if (changedTodo.isCompleted) {
+      showHideToast("Well done, you have completed this task!");
+    } else {
+      showHideToast("You marked this task as uncompleted");
+    }
 
-  setTodos(updatedTodos);
-
-    showhidetoast(" well done,you have completed this task ");
-  localStorage.setItem("todos", JSON.stringify(updatedTodos));
-}
-
-  function handledelete(id){
-     const updatedTodos= todos.filter(todo => todo.id !== id);
-     
-  setTodos(updatedTodos);
-  showhidetoast("task deleted successfully")
-  localStorage.setItem("todos", JSON.stringify(updatedTodos));
-
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
   }
- function handeledit(id, newTitle,newdetails) {
-  const updatedTodos = todos.map(todo =>
-    todo.id === id ? { ...todo, title: newTitle,details :newdetails} : todo
-   
-  );
 
-  setTodos(updatedTodos);
-   showhidetoast("task editted successfully");
-  localStorage.setItem("todos", JSON.stringify(updatedTodos));
-}
+ 
+  function handledelete(id) {
+    const updatedTodos = todos.filter(todo => todo.id !== id);
+    setTodos(updatedTodos);
+    showHideToast("Task deleted successfully");
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+  }
 
-useEffect(() => {
-  const storge = JSON.parse(localStorage.getItem("todos")) || initialTodos;
-  setTodos(storge);
-}, []);
+ 
+  function handeledit(id, newTitle, newDetails) {
+    const updatedTodos = todos.map(todo =>
+      todo.id === id ? { ...todo, title: newTitle, details: newDetails } : todo
+    );
+    setTodos(updatedTodos);
+    showHideToast("Task edited successfully");
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+  }
+
+  
+  useEffect(() => {
+    const storage = JSON.parse(localStorage.getItem("todos")) || initialTodos;
+    setTodos(storage);
+  }, []);
 
   function handleAddClick() {
     if (titleInput.trim() === "") return;
 
-    const NEWTODO = {
+    const newTodo = {
       id: uuidv4(),
       title: titleInput,
       details: "",
       isCompleted: false,
     };
-const updatedtodos=[...todos, NEWTODO]
-    setTodos(updatedtodos);
-    localStorage.setItem("todos",JSON.stringify(updatedtodos))
+    const updatedTodos = [...todos, newTodo];
+    setTodos(updatedTodos);
+    localStorage.setItem("todos", JSON.stringify(updatedTodos));
     setTitle("");
-    showhidetoast("new task added successfully");
+    showHideToast("New task added successfully");
   }
 
-  // ---------- FILTERING ----------
-  const filteredTodos =  useMemo(()=>{
-    return  todos.filter(t => {
-    if (alignment === "completed") return t.isCompleted === true;
-    if (alignment === "notcompleted") return t.isCompleted === false;
-    return true; // ALL
-  });
+  // filtering tasks
+  const filteredTodos = useMemo(() => {
+    return todos.filter(t => {
+      if (alignment === "completed") return t.isCompleted;
+      if (alignment === "notcompleted") return !t.isCompleted;
+      return true; // ALL
+    });
+  }, [todos, alignment]);
 
-  }, [todos, alignment])
   return (
-   
-    <Container 
-      maxWidth="lg" 
-      sx={{ mt: 5, display: 'flex', justifyContent: 'center', px: 2 }}
-    >
+    <Container maxWidth="lg" sx={{ mt: 5, display: 'flex', justifyContent: 'center', px: 2 }}>
       <Card sx={{
         maxWidth: 650,
         width: '100%',
@@ -134,12 +109,7 @@ const updatedtodos=[...todos, NEWTODO]
         boxShadow: "0 8px 25px rgba(0,0,0,0.3)"
       }}>
         <CardContent>
-
-          <Typography variant="h4" gutterBottom sx={{
-            fontWeight: "bold",
-            textAlign: "center",
-            mb: 3
-          }}>
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold", textAlign: "center", mb: 3 }}>
             MY TASKS
           </Typography>
 
@@ -178,41 +148,33 @@ const updatedtodos=[...todos, NEWTODO]
 
           {/* TASK LIST */}
           {filteredTodos.map(t => (
-            
-            <TODO 
-              key={t.id} 
-              id={t.id} 
-              title={t.title} 
-              details={t.details} 
-               isCompleted={t.isCompleted}
+            <TODO
+              key={t.id}
+              id={t.id}
+              title={t.title}
+              details={t.details}
+              isCompleted={t.isCompleted}
               onComplete={handleComplete}
               ondelete={handledelete}
-               onedit={handeledit}
+              onedit={handeledit}
             />
-               
-          )   )
-              }
+          ))}
 
           {/* INPUT AREA */}
-          <Grid container alignItems="center" justifyContent={'space-between'} spacing={2} sx={{ mt:4 }}>
+          <Grid container alignItems="center" justifyContent={'space-between'} spacing={2} sx={{ mt: 4 }}>
             <Grid item xs={8}>
-              <TextField 
+              <TextField
                 value={titleInput}
                 onChange={(e) => setTitle(e.target.value)}
                 label="Enter task"
                 variant="outlined"
                 InputLabelProps={{ style: { color: "white" } }}
                 InputProps={{ style: { color: "white" } }}
-                sx={{
-                  width: "300px",
-                  backgroundColor: "rgba(255,255,255,0.1)",
-                  borderRadius: 2
-                }}
+                sx={{ width: "300px", backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 2 }}
               />
             </Grid>
-
             <Grid item xs={4}>
-              <button 
+              <button
                 onClick={handleAddClick}
                 style={{
                   width: "100px",
