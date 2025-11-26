@@ -7,6 +7,22 @@
   font-family: 'myfont', sans-serif;
 }
 
+/* Logos */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
 /* Card styles */
 .card {
   width: 100%;
@@ -20,70 +36,89 @@
   transition: all 0.3s ease;
 }
 
-/* Todos container */
+/* Todos container - always vertical */
 .todos-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
+  flex-direction: column;
+  /* دايمًا تحت بعض */
   gap: 16px;
-  margin-top: 16px;
+  /* مسافة بين الكاردات */
 }
 
 /* Individual todo card */
 .todo {
-  width: 100%;
+  display: flex;
+  flex-direction: row;
+  /* العنوان + الأيقونات جنب بعض */
+  align-items: center;
+  justify-content: space-between;
   padding: 16px;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  /* لو الشاشة ضاقت، الأيقونات تنزل تحت */
+  gap: 12px;
   transition: all 0.3s ease, transform 0.3s ease;
-  cursor: pointer;
+}
+.todo .todo-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  /* الأيقونات مش هتنكمش */
+  margin-left: auto;
+  /* تدفع الأزرار للأخر دايمًا */
+  align-items: center;
+  /* تصطف عمودي في الوسط */
 }
 
 .todo:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.todo h3 {
-  font-size: 1.2rem;
-  margin-bottom: 8px;
-  color: #1e3a8a;
-  font-weight: bold;
+/* Todo text */
+.todo .todo-text {
+  flex: 1;
+  /* ياخد كل المساحة المتاحة للنص */
+  min-width: 120px;
+  /* لا يصغر عن كده */
+  margin-right: 12px;
+  word-break: break-word;
 }
 
-.todo p {
-  font-size: 1rem;
-  color: #333;
+/* Buttons container */
+.todo .todo-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  /* الأيقونات مش هتنكمش */
 }
 
+/* Completed todo */
 .todo.completed {
   opacity: 0.6;
   text-decoration: line-through;
+}
+
+/* Buttons */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
 }
 
 /* Input fields */
 input,
 .MuiTextField-root {
   width: 100%;
-  border-radius: 12px;
-  padding: 0.6rem;
+  border-radius: 8px;
+  padding: 0.5rem;
   box-sizing: border-box;
-  font-size: 1rem;
 }
-
-/* Buttons */
-button {
-  transition: all 0.2s ease;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+/* Buttons container - always at the end of the todo card */
 
 /* Responsive adjustments */
 /* Tablets (<=1024px) */
@@ -99,11 +134,6 @@ button:hover {
   .todo p {
     font-size: 0.95rem;
   }
-
-  .todos-container {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-  }
 }
 
 /* Mobile (<=768px) */
@@ -113,75 +143,62 @@ button:hover {
   }
 
   .card {
-    padding: 1.2rem;
-    border-radius: 14px;
-  }
-
-  .todos-container {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .todo {
-    padding: 14px;
+    padding: 1rem;
     border-radius: 12px;
   }
 
+  .todo {
+    flex-direction: column;
+    /* العنوان فوق، الأيقونات تحت */
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .todo .todo-text {
+    margin-right: 0;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+
+  .todo .todo-buttons {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   .todo h3 {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .todo p {
-    font-size: 0.95rem;
-  }
-
-  input.MuiTextField-root {
-    font-size: 0.95rem;
-    padding: 0.5rem;
+    font-size: 0.9rem;
   }
 
   button {
     width: 100%;
     padding: 0.8rem 0;
-    font-size: 1rem;
   }
 }
 
 /* Small phones (<=480px) */
 @media (max-width: 480px) {
-  #root {
+  .card {
     padding: 0.8rem;
   }
 
-  .card {
-    padding: 1rem;
-    border-radius: 12px;
-  }
-
-  .todos-container {
-    gap: 10px;
-  }
-
   .todo {
-    padding: 12px;
-    border-radius: 10px;
+    padding: 10px;
   }
 
   .todo h3 {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .todo p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
-  input.MuiTextField-root {
-    font-size: 0.9rem;
-    padding: 0.4rem;
-  }
-
-  button {
-    font-size: 0.95rem;
-    padding: 0.7rem 0;
+  .todos-container {
+    gap: 8px;
+    /* المسافة تتقل شوي */
   }
 }
