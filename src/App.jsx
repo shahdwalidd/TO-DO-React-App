@@ -5,6 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './App.css';
 import { Toastprovider } from "./contexts/Toastcontext.jsx";
 import Mysnackbar from "./components/Mysnackbar.jsx";
+import Todosprovider from "./contexts/Todoscontext.jsx";
 
 const theme = createTheme({
   typography: {
@@ -16,6 +17,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <Todosprovider>
       <Toastprovider>
         <div
           style={{
@@ -31,6 +33,7 @@ function App() {
         
         </div>
       </Toastprovider>
+      </Todosprovider>
     </ThemeProvider>
   );
 }

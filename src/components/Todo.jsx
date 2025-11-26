@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import React, { useState, useEffect, useMemo, useContext, useReducer } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -13,29 +12,14 @@ import TextField from '@mui/material/TextField';
 import '../App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { Toastcontext } from '../contexts/Toastcontext';
-import Todosreducer from '../reducers/Todosreducer';
-
-const initialTodos = [
-  { id: uuidv4(), title: "reading book", details: "from page 1 to 50", isCompleted: false },
-  { id: uuidv4(), title: "study", details: "data mining", isCompleted: false },
-  { id: uuidv4(), title: "do tasks", details: "for sections", isCompleted: false }
-];
+import { Todoscontext } from "../contexts/Todoscontext";
 
 export default function TOdolist() {
   const { showHideToast } = useContext(Toastcontext);
   const [titleInput, setTitle] = useState("");
   const [alignment, setAlignment] = useState("all");
 
-
-  const [todos, dispatch] = useReducer(Todosreducer, [], () => {
-    const storage = JSON.parse(localStorage.getItem("todos"));
-    return storage && storage.length ? storage : initialTodos;
-  });
-
- 
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+  const { todos, dispatch } = useContext(Todoscontext);
 
   const handleChange = (event, newAlignment) => {
     if (newAlignment !== null) setAlignment(newAlignment);
@@ -44,11 +28,9 @@ export default function TOdolist() {
   const handleComplete = (id) => {
     const currentTodo = todos.find(todo => todo.id === id);
     if (!currentTodo) return;
-    const willBeCompleted = !currentTodo.isCompleted;
-    const message = willBeCompleted
+    const message = !currentTodo.isCompleted
       ? "Well done, you have completed this task!"
       : "You marked this task as uncompleted";
-
     dispatch({ type: "com", payload: { id } });
     showHideToast(message);
   };
@@ -102,7 +84,6 @@ export default function TOdolist() {
 
           <Divider sx={{ mb: 3, borderColor: "rgba(255,255,255,0.3)" }} />
 
-          {/* FILTER BUTTONS */}
           <ToggleButtonGroup
             color="primary"
             value={alignment}
@@ -133,7 +114,6 @@ export default function TOdolist() {
             <ToggleButton value="notcompleted">Not Completed</ToggleButton>
           </ToggleButtonGroup>
 
-          {/* TASK LIST */}
           <div className="todos-container">
             {filteredTodos.map(t => (
               <TODO
@@ -149,7 +129,6 @@ export default function TOdolist() {
             ))}
           </div>
 
-          {/* INPUT AREA */}
           <Grid container alignItems="center" justifyContent={'space-between'} spacing={2} sx={{ mt: 4 }}>
             <Grid item xs={8}>
               <TextField
