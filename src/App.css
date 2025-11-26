@@ -1,19 +1,24 @@
+/* Root and general layout */
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  font-family: 'myfont', sans-serif;
 }
 
+/* Logos */
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +27,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -33,38 +39,151 @@
   }
 }
 
+/* Card styles */
 .card {
-  padding: 2em;
+  width: 100%;
+  max-width: 650px;
+  padding: 2rem;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.read-the-docs {
-  color: #888;
+/* Todos container */
+.todos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }
 
+/* Individual todo card */
 .todo {
-  min-width: 275px;
-  max-width: 600px;
+  width: 100%;
   padding: 16px;
-  margin-bottom: 16px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  
+  transition: all 0.3s ease, transform 0.3s ease;
 }
 
 .todo:hover {
- padding-bottom: 20px;
- padding-top: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-@font-face {
-  font-family: myfont;
-  src: url(../public/fonts/ScienceGothic_Condensed-Bold.ttf);
-  font-weight: 900;
+
+.todo h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: #1e3a8a;
+  font-weight: bold;
 }
-@font-face {
-  font-family: myfont;
-  src: url(../public/fonts/ScienceGothic-Thin.ttf);
-  font-weight: 100;
+
+.todo p {
+  font-size: 1rem;
+  color: #333;
+}
+
+.todo.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+/* Buttons */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Input fields */
+input,
+.MuiTextField-root {
+  width: 100%;
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+/* Tablets (<=1024px) */
+@media (max-width: 1024px) {
+  .card {
+    padding: 1.5rem;
+  }
+
+  .todo h3 {
+    font-size: 1.1rem;
+  }
+
+  .todo p {
+    font-size: 0.95rem;
+  }
+
+  .todos-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+}
+
+/* Mobile (<=768px) */
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .todos-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .todo {
+    padding: 12px;
+  }
+
+  .todo h3 {
+    font-size: 1rem;
+  }
+
+  .todo p {
+    font-size: 0.9rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.8rem 0;
+  }
+}
+
+/* Small phones (<=480px) */
+@media (max-width: 480px) {
+  .card {
+    padding: 0.8rem;
+  }
+
+  .todo {
+    padding: 10px;
+  }
+
+  .todo h3 {
+    font-size: 0.95rem;
+  }
+
+  .todo p {
+    font-size: 0.85rem;
+  }
+
+  .todos-container {
+    gap: 8px;
+  }
 }

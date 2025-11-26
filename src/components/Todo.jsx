@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import React, { useState, useEffect, useMemo, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useContext, useReducer } from 'react';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -13,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import '../App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { Toastcontext } from '../contexts/Toastcontext';
-
+import Todosreducer from '../reducers/Todosreducer';
 
 const initialTodos = [
   { id: uuidv4(), title: "reading book", details: "from page 1 to 50", isCompleted: false },
@@ -23,77 +23,64 @@ const initialTodos = [
 
 export default function TOdolist() {
   const { showHideToast } = useContext(Toastcontext);
-  const [todos, setTodos] = useState(initialTodos);
   const [titleInput, setTitle] = useState("");
   const [alignment, setAlignment] = useState("all");
 
-  
+
+  const [todos, dispatch] = useReducer(Todosreducer, [], () => {
+    const storage = JSON.parse(localStorage.getItem("todos"));
+    return storage && storage.length ? storage : initialTodos;
+  });
+
+ 
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
   const handleChange = (event, newAlignment) => {
     if (newAlignment !== null) setAlignment(newAlignment);
   };
 
-  function handleComplete(id) {
-    const updatedTodos = todos.map(todo =>
-      todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-    );
-    setTodos(updatedTodos);
+  const handleComplete = (id) => {
+    const currentTodo = todos.find(todo => todo.id === id);
+    if (!currentTodo) return;
+    const willBeCompleted = !currentTodo.isCompleted;
+    const message = willBeCompleted
+      ? "Well done, you have completed this task!"
+      : "You marked this task as uncompleted";
 
-    const changedTodo = updatedTodos.find(todo => todo.id === id);
-    if (changedTodo.isCompleted) {
-      showHideToast("Well done, you have completed this task!");
-    } else {
-      showHideToast("You marked this task as uncompleted");
-    }
+    dispatch({ type: "com", payload: { id } });
+    showHideToast(message);
+  };
 
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
-
- 
-  function handledelete(id) {
-    const updatedTodos = todos.filter(todo => todo.id !== id);
-    setTodos(updatedTodos);
+  const handledelete = (id) => {
+    dispatch({ type: "del", payload: { id } });
     showHideToast("Task deleted successfully");
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
+  };
 
- 
-  function handeledit(id, newTitle, newDetails) {
-    const updatedTodos = todos.map(todo =>
-      todo.id === id ? { ...todo, title: newTitle, details: newDetails } : todo
-    );
-    setTodos(updatedTodos);
+  const handeledit = (id, newTitle, newDetails) => {
+    dispatch({ type: "edit", payload: { id, title: newTitle, details: newDetails } });
     showHideToast("Task edited successfully");
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
+  };
 
-  
-  useEffect(() => {
-    const storage = JSON.parse(localStorage.getItem("todos")) || initialTodos;
-    setTodos(storage);
-  }, []);
-
-  function handleAddClick() {
+  const handleAddClick = () => {
     if (titleInput.trim() === "") return;
-
     const newTodo = {
       id: uuidv4(),
       title: titleInput,
       details: "",
-      isCompleted: false,
+      isCompleted: false
     };
-    const updatedTodos = [...todos, newTodo];
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "added", payload: newTodo });
     setTitle("");
     showHideToast("New task added successfully");
-  }
+  };
 
-  // filtering tasks
   const filteredTodos = useMemo(() => {
     return todos.filter(t => {
       if (alignment === "completed") return t.isCompleted;
       if (alignment === "notcompleted") return !t.isCompleted;
-      return true; // ALL
+      return true;
     });
   }, [todos, alignment]);
 
@@ -147,18 +134,20 @@ export default function TOdolist() {
           </ToggleButtonGroup>
 
           {/* TASK LIST */}
-          {filteredTodos.map(t => (
-            <TODO
-              key={t.id}
-              id={t.id}
-              title={t.title}
-              details={t.details}
-              isCompleted={t.isCompleted}
-              onComplete={handleComplete}
-              ondelete={handledelete}
-              onedit={handeledit}
-            />
-          ))}
+          <div className="todos-container">
+            {filteredTodos.map(t => (
+              <TODO
+                key={t.id}
+                id={t.id}
+                title={t.title}
+                details={t.details}
+                isCompleted={t.isCompleted}
+                onComplete={handleComplete}
+                ondelete={handledelete}
+                onedit={handeledit}
+              />
+            ))}
+          </div>
 
           {/* INPUT AREA */}
           <Grid container alignItems="center" justifyContent={'space-between'} spacing={2} sx={{ mt: 4 }}>
